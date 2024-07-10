@@ -1,15 +1,11 @@
-import { useState } from 'react'; // Correct import statement
-import './App.css';
-import Login from './components/login/Login';
-import Chatcont from './components/chatcont/Chatcont';
+
+import './App.css'
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+
   return (
-    <div className='h-screen w-screen'>
-      {isLoggedIn ? <Chatcont /> : <Login />}
-    </div>
-  );
+    <div>this is karan and paritosh</div>
+  )
 }
 
-export default App;
+export default App

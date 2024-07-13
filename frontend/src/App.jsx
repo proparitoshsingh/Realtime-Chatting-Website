@@ -1,4 +1,5 @@
-import Sidebar from './Components/Sidebar'
+import Sidebar from './components/Sidebar'
+import ChatSection from './components/ChatSection'
 import './App.css'
 
 function App() {
@@ -6,6 +7,7 @@ function App() {
   return (
     <div className="container">
       <Sidebar/>
+      <ChatSection/>
     </div>
   )
 }

@@ -10,5 +10,11 @@
     width: 100%;
     min-height: 100dvh;
     display: flex;
-    border: 10px solid red;
+}
+
+::-webkit-scrollbar{
+    width: 2px;
+}
+::-webkit-scrollbar-thumb{
+    background: black;
 }

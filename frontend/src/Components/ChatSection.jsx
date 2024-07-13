@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import profilePic from '../assets/profile.png';
 
@@ -36,6 +36,36 @@ const messages = [
 
 const ChatSection = () => {
    const [newMessage, setNewMessage] = useState('');
+   const [showMenu, setShowMenu] = useState(false);
+   const menuRef = useRef(null);
+   const menuButtonRef = useRef(null);
+
+   useEffect(() => {
+      document.addEventListener('mousedown', handleOutsideClick);
+      return () => {
+         document.removeEventListener('mousedown', handleOutsideClick);
+      };
+   }, [showMenu]);
+
+   const toggleMenu = () => {
+      setShowMenu(!showMenu);
+   };
+
+   const handleOptionClick = (option) => {
+      console.log('The selected option is : ', option);
+      setShowMenu(false);
+   };
+
+   const handleOutsideClick = (event) => {
+      if (
+         showMenu &&
+         !menuRef.current.contains(event.target) &&
+         !menuButtonRef.current.contains(event.target)
+      ) {
+         setShowMenu(false);
+      }
+   };
+
    return (
       <StyledContainer>
          <div className="outer--container">
@@ -43,6 +73,20 @@ const ChatSection = () => {
                <div className="chat-header">
                   <img src={profilePic} alt="profile pic" />
                   <h2>KV United</h2>
+                  <span className="material-symbols-outlined chat-menu" onClick={toggleMenu} ref={menuButtonRef}>menu</span>
+                  {showMenu && (
+                     <div className="popup-menu" ref={menuRef}>
+                        <div className="option" onClick={() => handleOptionClick('Notification Preference')}>
+                           Notification Preference
+                        </div>
+                        <div className="option" onClick={() => handleOptionClick('View Description')}>
+                           View Description
+                        </div>
+                        <div className="option" onClick={() => handleOptionClick('Delete Conversation')}>
+                           Delete Conversation
+                        </div>
+                     </div>
+                  )}
                </div>
                <div className="chat-messages">
                   {messages.map((msg) => (
@@ -107,12 +151,41 @@ const StyledContainer = styled.div`
          background-color: #ffffff;
          border-bottom: 1px solid #ddd;
          display: flex;
-         justify-content: flex-start;
+         justify-content: flex-end;
          align-items: center;
 
          h2 {
             margin-left: 20px;
             font-size: 1.5rem;
+         }
+         .chat-menu{
+            margin-left: auto;
+            cursor: pointer;
+            color: #888;
+         }
+
+         .popup-menu {
+            position: absolute;
+            top: 100px;
+            right: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+         }
+
+         .option {
+            padding: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 1rem;
+
+            &:hover {
+               background-color: #f5f5f5;
+            }
          }
       }
 

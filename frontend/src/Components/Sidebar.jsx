@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import profilePic from '../assets/profile.png';
 import Navbar from './Navbar';

@@ -26,4 +26,4 @@ const messageSchema = new mongoose.Schema({
 
 const Message = mongoose.model("Message", messageSchema);
 
-module.exports=messageSchema;
+module.exports=Message;

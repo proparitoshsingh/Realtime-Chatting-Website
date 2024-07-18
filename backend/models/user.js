@@ -20,7 +20,17 @@ const userSchema = new mongoose.Schema({
     googleId: {
         type: String,
         unique: true,
-    }
+    },
+    inbox: [
+        {
+            type: String
+        }
+    ],
+    requested: [
+        {
+            type: String
+        }
+    ]
 });
 
 const User = mongoose.model('User', userSchema);

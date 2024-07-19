@@ -17,8 +17,8 @@ router.get('/google/callback', passport.authenticate('google', {
 }));
 
 router.post('/signup', async (req, res) => {
-   const { username, email, password, repassword } = req.body;
-   if (!username || !email || !password || !repassword) {
+   const { username, email, password, repassword, name } = req.body;
+   if (!username || !email || !password || !repassword || !name) {
       return res.status(400).json({ message: 'Please enter all fields' });
    }
    if (password !== repassword) {
@@ -33,12 +33,14 @@ router.post('/signup', async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
       user = new User({
          username,
+         name,
          email,
          password: hashedPassword
       });
       await user.save();
       res.status(201).json({ message: 'User registered successfully' });
    } catch (error) {
+      console.log(error);
       res.status(500).json({ message: 'Server error' });
    }
 });

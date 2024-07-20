@@ -22,6 +22,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', require('./routes/auth'));
+app.use('/dashboard', require("./routes/dashboard"));
 
 app.get('/dashboard', (req, res) => {
    if (req.isAuthenticated()) {

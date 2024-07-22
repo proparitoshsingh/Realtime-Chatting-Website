@@ -1,14 +1,26 @@
-// config/passport.js
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
-const User = require('../models/User');
+const User = require('../models/user');
 const bcrypt = require('bcryptjs');
+
+async function generateUniqueUsername(displayName) {
+   let username = displayName.replace(/\s+/g, '').toLowerCase(); // Simple username generation
+   let uniqueUsername = username;
+   let counter = 1;
+
+   while (await User.findOne({ username: uniqueUsername })) {
+      uniqueUsername = `${username}${counter}`;
+      counter++;
+   }
+
+   return uniqueUsername;
+}
 
 passport.use(new GoogleStrategy({
    clientID: process.env.GOOGLE_CLIENT_ID,
    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-   callbackURL: "/auth/google/callback"
+   callbackURL: "http://localhost:3000/auth/google/callback"
 },
    async (accessToken, refreshToken, profile, done) => {
       try {
@@ -16,9 +28,11 @@ passport.use(new GoogleStrategy({
          if (user) {
             return done(null, user);
          }
+         const username = await generateUniqueUsername(profile.displayName);
          user = await User.create({
             googleId: profile.id,
             name: profile.displayName,
+            username: username,
             email: profile.emails[0].value
          });
          done(null, user);
@@ -60,6 +74,7 @@ passport.deserializeUser(async (id, done) => {
       const user = await User.findById(id);
       done(null, user);
    } catch (error) {
+      console.log("some error in deserializing!");
       done(error);
    }
 });

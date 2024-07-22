@@ -16,10 +16,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        sparse: true
     },
     googleId: {
         type: String,
-        unique: true,
     },
     inbox: [
         {
@@ -32,6 +32,8 @@ const userSchema = new mongoose.Schema({
         }
     ]
 });
+
+userSchema.index({ googleId: 1 }, { unique: true, partialFilterExpression: { googleId: { $exists: true, $ne: null } } });
 
 const User = mongoose.model('User', userSchema);
 

@@ -1,7 +1,8 @@
 const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
-const connectDB = require("./config/db")
+const connectDB = require('./config/db');
+const checkAuthenticated= require('./middleware/checkAuthenticated');
 const cors = require('cors');
 require('dotenv').config();
 require('./config/passport');
@@ -10,12 +11,17 @@ const app = express();
 
 connectDB();
 
+app.use(cors({
+   origin: process.env.CLIENT_URL,
+   credentials: true,
+}));
+
 app.use(express.json());
 app.use(session({
    secret: process.env.SESSION_KEY,
    resave: false,
-   saveUninitialized: true,
-   cookie: { maxAge: 24 * 60 * 60 * 1000 }
+   saveUninitialized: false,
+   cookie: { maxAge: 24 * 60 * 60 * 1000 },
 }));
 
 app.use(passport.initialize());
@@ -23,12 +29,24 @@ app.use(passport.session());
 
 app.use('/auth', require('./routes/auth'));
 
-app.get('/dashboard', (req, res) => {
+app.get('/auth/check', (req, res) => {
    if (req.isAuthenticated()) {
-      res.send(`Welcome ${req.user.username} to the Chat dashboard!`);
+      console.log('Request is Authenticated!');
+      res.json({ isAuthenticated: true });
    } else {
-      res.redirect('/signin');
+      console.log('Request is not Authenticated!');
+      res.json({ isAuthenticated: false });
    }
+});
+
+
+app.get('/dashboard', checkAuthenticated, (req, res) => {
+   res.json({ message: 'welcome to chatter' });
+});
+
+app.use((err, req, res, next) => {
+   console.error(err.stack);
+   res.status(500).send('Something broke!');
 });
 
 const PORT = process.env.PORT || 3000;

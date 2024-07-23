@@ -7,6 +7,7 @@ const SignUp = () => {
    const [username, setUsername] = useState('');
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
+   const [name, setName]= useState('');
    const [confirmPassword, setConfirmPassword] = useState('');
    const [error, setError] = useState('');
    const [successMessage, setSuccessMessage] = useState('');
@@ -19,7 +20,7 @@ const SignUp = () => {
          return;
       }
       try {
-         const response = await axios.post('http://localhost:3000/auth/signup', { username, email, password, repassword: confirmPassword });
+         const response = await axios.post('http://localhost:3000/auth/signup', { username, email, password, repassword: confirmPassword, name});
          if (response.status === 201) {
             setSuccessMessage('Sign up successful! Redirecting to login...');
             setTimeout(() => {
@@ -51,6 +52,15 @@ const SignUp = () => {
                         id="username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                     />
+                  </div>
+                  <div className="input-group">
+                     <label htmlFor="name">Full Name</label>
+                     <input
+                        type="text"
+                        id="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                      />
                   </div>
                   <div className="input-group">

@@ -8,6 +8,7 @@ const Login = ({ onLoginSuccess }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [visibility, setVisibility] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -23,6 +24,9 @@ const Login = ({ onLoginSuccess }) => {
       setError('Login failed');
     }
   };
+  const handleClick = () => {
+    setVisibility(!visibility);
+  }
 
   const handleGoogleLogin = () => {
     window.location.href = 'http://localhost:3000/auth/google';
@@ -48,11 +52,14 @@ const Login = ({ onLoginSuccess }) => {
             <div className="input-group">
               <label htmlFor="password">Password</label>
               <input
-                type="password"
+                type={visibility?"text":"password"}
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+              <div className='eye' onClick={handleClick}>
+                <i className={visibility?"fa-solid fa-eye-slash":"fa-solid fa-eye"}></i>
+              </div>
             </div>
             {error && <div className="error-message">{error}</div>}
             <button type="submit">Login</button>
@@ -122,6 +129,7 @@ const StyledContainer = styled.div`
           display: flex;
           flex-direction: column;
           margin-bottom: 15px;
+          position: relative;
 
           label {
             margin-bottom: 5px;
@@ -132,6 +140,14 @@ const StyledContainer = styled.div`
             padding: 10px;
             border: none;
             border-radius: 5px;
+            position: relative;
+          }
+          .eye{
+            position: absolute;
+            right: 0;
+            top: 50%;
+            margin: 2px 10px;
+            cursor: pointer;
           }
         }
 

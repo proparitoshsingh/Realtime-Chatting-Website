@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import profilePic from '../assets/profile.png';
+import { TypeAnimation } from 'react-type-animation';
 
 const Login = ({ onLoginSuccess }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
@@ -24,6 +25,7 @@ const Login = ({ onLoginSuccess }) => {
       setError('Login failed');
     }
   };
+  
   const handleClick = () => {
     setVisibility(!visibility);
   }
@@ -31,168 +33,215 @@ const Login = ({ onLoginSuccess }) => {
   const handleGoogleLogin = () => {
     window.location.href = 'http://localhost:3000/auth/google';
   };
+  
   return (
     <StyledContainer>
-      <div className="outer--container">
+        <div className="tagline-part">
+          <h2 className='tagline-title'>
+          <span style={{display: 'block'}}>
+            Stay
+          </span>
+          <TypeAnimation
+            sequence={[
+            'Connected.',
+            1000,
+            'Chatting',
+            1000
+            ]}
+            wrapper="span"
+            speed={50}
+            style={{display: 'inline-block' }}
+            repeat={Infinity}
+          />
+          </h2>
+          <p className='tagline-text'>
+            stay connected with your friends.
+          </p>
+        </div>
         <div className="card--container">
           <div className="login-header">
-            <img src={profilePic} alt="profile pic" />
             <h2>Login</h2>
           </div>
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="input-group">
-              <label htmlFor="usernameOrEmail">Username or Email</label>
               <input
+                className='inputF'
                 type="text"
                 id="usernameOrEmail"
                 value={usernameOrEmail}
                 onChange={(e) => setUsernameOrEmail(e.target.value)}
+                required
               />
+              <label htmlFor='usernameOrEmail'>Username or Email</label>
             </div>
             <div className="input-group">
-              <label htmlFor="password">Password</label>
               <input
-                type={visibility?"text":"password"}
+                className='inputF'
+                type={visibility ? "text" : "password"}
                 id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
               />
+              <label htmlFor='password'>Password</label>
               <div className='eye' onClick={handleClick}>
-                <i className={visibility?"fa-solid fa-eye-slash":"fa-solid fa-eye"}></i>
+                <i className={visibility ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"}></i>
               </div>
             </div>
+            <span className='f-pass'>Forgot password?</span>
             {error && <div className="error-message">{error}</div>}
-            <button type="submit">Login</button>
+            <button type="submit" className='login'>Login</button>
+            <hr />
             <button type="button" className="google-button" onClick={handleGoogleLogin}>
-              Continue with Google
+              <i className="fa-brands fa-google iconG"></i>Continue with Google
             </button>
           </form>
+          <p>Not Registered?&nbsp;
           <button className="signup-button" onClick={() => navigate('/signup')}>
             Sign Up
-          </button>
+          </button></p>
         </div>
-      </div>
     </StyledContainer>
   );
 };
 
-
 const StyledContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  background-color: #2e236c;
-
-  .outer--container {
+  background: linear-gradient(45deg, #FF6F61 50%, #00695C 50%);
+  .tagline-part{
+    color: white;
+    width: 500px;
+    .tagline-title{
+      font-size: 70px;
+    }
+    .tagline-text{
+      font-weight: 400;
+      font-size: 16px;
+      text-align: right;
+    }
+  }
+  .card--container {
+    max-width: 370px;
     width: 100%;
-    max-width: 30vw;
-    padding: 20px;
-    background-color: #17153b;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 25px 30px;
+    box-shadow: 0 5px 8px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    background-color: #f2f2f2;
 
-    .card--container {
+    .login-header {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      background-color: #1a366b;
-      border-radius: 12px;
-      padding: 20px;
-
-      img {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
+      h2 {
+        text-decoration: underline;
+        color: purple;
+        margin-bottom: 15px;
       }
+    }
 
-      .login-header {
+    .login-form {
+      position: relative;
+      .input-group {
+        width: 100%;
+        height: 40px;
+        position: relative;
+        margin-top: 20px;
         display: flex;
-        flex-direction: column;
         align-items: center;
-        margin-bottom: 20px;
 
-        h2 {
-          margin-top: 10px;
-          font-size: 1.5rem;
-          color: #ffffff;
-        }
-      }
-
-      .login-form {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-
-        .input-group {
-          display: flex;
-          flex-direction: column;
-          margin-bottom: 15px;
-          position: relative;
-
-          label {
-            margin-bottom: 5px;
-            color: #ffffff;
-          }
-
-          input {
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            position: relative;
-          }
-          .eye{
-            position: absolute;
-            right: 0;
-            top: 50%;
-            margin: 2px 10px;
-            cursor: pointer;
-          }
+        label {
+          position: absolute;
+          left: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 16px;
+          color: #919191;
+          transition: top 0.2s, font-size 0.2s, color 0.2s;
+          background-color: #f2f2f2;
+          padding: 0 5px;
         }
 
-        .error-message {
-          color: #ff4d4d;
-          margin-bottom: 15px;
-          text-align: center;
-        }
-
-        button {
+        input {
+          width: 100%;
+          height: 100%;
+          border-radius: 4px;
+          border: 1px solid #ccc;
+          outline: none;
           padding: 10px;
-          margin-bottom: 10px;
-          background-color: #4caf50;
-          color: white;
-          border: none;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s;
+          font-size: 16px;
+          background: none;
 
-          &:hover {
-            background-color: #45a049;
+          &:focus + label,
+          &:valid + label {
+            top: 0px;
+            font-size: 12px;
+            color: #333;
           }
         }
-          .google-button {
-          background-color: #db4437;
-          margin-top: 10px;
 
-          &:hover {
-            background-color: #c33d2e;
+        .eye {
+          position: absolute;
+          right: 10px;
+          cursor: pointer;
+          i {
+            color: #919191;
           }
         }
       }
-
-      .signup-button {
-        padding: 10px;
+      .f-pass {
+        font-size: 10px;
+        position: absolute;
+        color: blue;
+        cursor: pointer;
+        right: 0;
+        &:hover{
+          text-decoration: underline;
+        }
+      }
+      button {
         width: 100%;
-        background-color: #4b70f5;
+        display: block;
+        margin-top: 20px;
+        height: 37px;
+        background: #0f58c6;
         color: white;
         border: none;
-        border-radius: 5px;
+        outline: none;
         cursor: pointer;
-        transition: background-color 0.3s;
+        border-radius: 5px;
+      }
+      .login {
+        margin-top: 40px;
+        margin-bottom: 20px;
+        letter-spacing: 1px;
+        font-size: 18px;
+      }
+      .google-button {
+        background-color: #DB4437;
+        text-align: left;
+        padding-left: 10px;
+        font-size: 16px;
+        .iconG {
+          margin-right: 10px;
+        }
+      }
+    }
+    p {
+      font-size: 12px;
+      margin-top: 10px;
+      text-align: center;
 
+      button {
+        outline: none;
+        border: none;
+        font-size: 12px;
+        color: blue;
         &:hover {
-          background-color: #3a57d5;
+          text-decoration: underline;
+          cursor: pointer;
         }
       }
     }

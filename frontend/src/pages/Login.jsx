@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
-import profilePic from '../assets/profile.png';
 import { TypeAnimation } from 'react-type-animation';
 
 const Login = ({ onLoginSuccess }) => {
@@ -43,9 +42,9 @@ const Login = ({ onLoginSuccess }) => {
           </span>
           <TypeAnimation
             sequence={[
-            'Connected.',
+            'Connected,',
             1000,
-            'Chatting',
+            'Chatting.',
             1000
             ]}
             wrapper="span"
@@ -112,6 +111,9 @@ const StyledContainer = styled.div`
   justify-content: space-evenly;
   align-items: center;
   background: linear-gradient(45deg, #FF6F61 50%, #00695C 50%);
+  @media (max-width: 1000px){
+   justify-content: center;
+  }
   .tagline-part{
     color: white;
     width: 500px;
@@ -123,6 +125,9 @@ const StyledContainer = styled.div`
       font-size: 16px;
       text-align: right;
     }
+    @media (max-width: 1000px){
+      display: none;
+   }
   }
   .card--container {
     max-width: 370px;

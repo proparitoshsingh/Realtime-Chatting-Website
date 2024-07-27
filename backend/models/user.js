@@ -30,7 +30,9 @@ const userSchema = new mongoose.Schema({
         {
             type: String
         }
-    ]
+    ],
+    otp: String,
+    otpExpires: Date
 });
 
 userSchema.index({ googleId: 1 }, { unique: true, partialFilterExpression: { googleId: { $exists: true, $ne: null } } });

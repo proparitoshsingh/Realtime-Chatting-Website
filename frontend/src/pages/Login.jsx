@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import styled from 'styled-components';
 import { TypeAnimation } from 'react-type-animation';
+import ForgotPasswordPopUp from "../components/ForgotPasswordPopup";
 
 const Login = ({ onLoginSuccess }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [visibility, setVisibility] = useState(false);
+  const [clickForgotPassword, setClickForgotPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -24,82 +26,92 @@ const Login = ({ onLoginSuccess }) => {
       setError('Login failed');
     }
   };
-  
+
   const handleClick = () => {
     setVisibility(!visibility);
-  }
+  };
 
   const handleGoogleLogin = () => {
     window.location.href = 'http://localhost:3000/auth/google';
   };
-  
+
+  const handleForgotPasswordClick = () => {
+    setClickForgotPassword(true);
+  };
+
+  const closeForgotPasswordPopup = () => {
+    setClickForgotPassword(false);
+  };
+
   return (
-    <StyledContainer>
-        <div className="tagline-part">
-          <h2 className='tagline-title'>
-          <span style={{display: 'block'}}>
+    <StyledContainer style={clickForgotPassword ? { background: "linear-gradient(45deg, #78352f 50%, #173d39 50%)" } : {}}>
+      <div className="tagline-part">
+        <h2 className='tagline-title'>
+          <span style={{ display: 'block' }}>
             Stay
           </span>
           <TypeAnimation
             sequence={[
-            'Connected,',
-            1000,
-            'Chatting.',
-            1000
+              'Connected,',
+              1000,
+              'Chatting.',
+              1000
             ]}
             wrapper="span"
             speed={50}
-            style={{display: 'inline-block' }}
+            style={{ display: 'inline-block' }}
             repeat={Infinity}
           />
-          </h2>
-          <p className='tagline-text'>
-            stay connected with your friends.
-          </p>
+        </h2>
+        <p className='tagline-text'>
+          stay connected with your friends.
+        </p>
+      </div>
+      <div className="card--container">
+        <div className="login-header">
+          <h2>Login</h2>
         </div>
-        <div className="card--container">
-          <div className="login-header">
-            <h2>Login</h2>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="input-group">
+            <input
+              className='inputF'
+              type="text"
+              id="usernameOrEmail"
+              value={usernameOrEmail}
+              onChange={(e) => setUsernameOrEmail(e.target.value)}
+              required
+            />
+            <label htmlFor='usernameOrEmail'>Username or Email</label>
           </div>
-          <form className="login-form" onSubmit={handleSubmit}>
-            <div className="input-group">
-              <input
-                className='inputF'
-                type="text"
-                id="usernameOrEmail"
-                value={usernameOrEmail}
-                onChange={(e) => setUsernameOrEmail(e.target.value)}
-                required
-              />
-              <label htmlFor='usernameOrEmail'>Username or Email</label>
+          <div className="input-group">
+            <input
+              className='inputF'
+              type={visibility ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <label htmlFor='password'>Password</label>
+            <div className='eye' onClick={handleClick}>
+              <i className={visibility ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"}></i>
             </div>
-            <div className="input-group">
-              <input
-                className='inputF'
-                type={visibility ? "text" : "password"}
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-              <label htmlFor='password'>Password</label>
-              <div className='eye' onClick={handleClick}>
-                <i className={visibility ? "fa-solid fa-eye-slash" : "fa-solid fa-eye"}></i>
-              </div>
-            </div>
-            <span className='f-pass'>Forgot password?</span>
-            {error && <div className="error-message">{error}</div>}
-            <button type="submit" className='login'>Login</button>
-            <hr />
-            <button type="button" className="google-button" onClick={handleGoogleLogin}>
-              <i className="fa-brands fa-google iconG"></i>Continue with Google
-            </button>
-          </form>
-          <p>Not Registered?&nbsp;
+          </div>
+          <span className='f-pass' onClick={handleForgotPasswordClick}>Forgot password?</span>
+          {error && <div className="error-message">{error}</div>}
+          <button type="submit" className='login'>Login</button>
+          <hr />
+          <button type="button" className="google-button" onClick={handleGoogleLogin}>
+            <i className="fa-brands fa-google iconG"></i>Continue with Google
+          </button>
+        </form>
+        <p>Not Registered?&nbsp;
           <button className="signup-button" onClick={() => navigate('/signup')}>
             Sign Up
-          </button></p>
-        </div>
+          </button>
+        </p>
+      </div>
+      {clickForgotPassword && <ForgotPasswordPopUp onClose={closeForgotPasswordPopup} />}
     </StyledContainer>
   );
 };
@@ -112,7 +124,7 @@ const StyledContainer = styled.div`
   align-items: center;
   background: linear-gradient(45deg, #FF6F61 50%, #00695C 50%);
   @media (max-width: 1000px){
-   justify-content: center;
+    justify-content: center;
   }
   .tagline-part{
     color: white;
@@ -127,7 +139,7 @@ const StyledContainer = styled.div`
     }
     @media (max-width: 1000px){
       display: none;
-   }
+    }
   }
   .card--container {
     max-width: 370px;

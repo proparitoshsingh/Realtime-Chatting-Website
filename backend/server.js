@@ -28,6 +28,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', require('./routes/auth'));
+app.use('/forget-password',require('./routes/verification'));
 
 app.get('/auth/check', (req, res) => {
    if (req.isAuthenticated()) {

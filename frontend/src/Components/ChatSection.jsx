@@ -34,7 +34,9 @@ const messages = [
    },
 ];
 
-const ChatSection = () => {
+const ChatSection = ({ username , token}) => {
+
+
    const [newMessage, setNewMessage] = useState('');
    const [showMenu, setShowMenu] = useState(false);
    const menuRef = useRef(null);

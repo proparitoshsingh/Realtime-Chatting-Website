@@ -1,16 +1,49 @@
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import profilePic from '../assets/profile.png';
 import Navbar from './Navbar';
 import ContactsSec from './ContactsSec';
 
-const Sidebar = () => {
+const Sidebar = ({ username, token }) => {
+  const [inbox, setInbox] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchInbox = async () => {
+      try {
+        const response = await fetch(`http://localhost:3000/user/inbox?username=${username}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+        const data = await response.json();
+        if (response.ok) {
+          setInbox(data.inbox);
+          console.log('Inbox:', data.inbox);
+        } else {
+          console.error('Error fetching inbox:', data.error);
+        }
+      } catch (error) {
+        console.error('Error fetching inbox:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInbox();
+  }, [username, token]); 
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <StyledContainer>
       <div className='outer--container'>
         <div className='card--container'>
           <img src={profilePic} alt="profile pic" />
           <div className='user--info'>
-            <h2 className='user--name'>Karan Srestha</h2>
+            <h2 className='user--name'>{username}</h2>
             <p className='more--info'>Account info</p>
           </div>
           <div className='search--icon'>
@@ -19,7 +52,7 @@ const Sidebar = () => {
         </div>
         <Navbar />
         <h4 className="msg">Messages</h4>
-        <ContactsSec />
+        <ContactsSec inbox={inbox} />
       </div>
     </StyledContainer>
   );
@@ -92,10 +125,6 @@ const StyledContainer = styled.div`
       font-weight: 200;
       border-bottom: 1px solid #ffffffb1;
       margin-bottom: 10px;
-    }
-
-    ${ContactsSec} {
-      flex-grow: 1;
     }
   }
 `;

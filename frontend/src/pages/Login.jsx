@@ -18,6 +18,8 @@ const Login = ({ onLoginSuccess }) => {
     try {
       const response = await axios.post('http://localhost:3000/auth/signin', { usernameOrEmail, password }, { withCredentials: true });
       if (response.data.success) {
+        localStorage.setItem("username", response.data.username);
+        localStorage.setItem("token", response.data.token);
         console.log('Navigating to /dashboard');
         onLoginSuccess();
         navigate('/dashboard');

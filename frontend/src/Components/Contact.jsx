@@ -1,18 +1,22 @@
-import styled from "styled-components"
-import ProfilePic from "../assets/profile.png"
+import styled from "styled-components";
+import { useNavigate } from 'react-router-dom';
 
-const Contact = () => {
-  return (
-    <StyledContainer>
-        <img src={ProfilePic} alt="" />
-        <div className="info">
-            <h2 className="name">Paritosh Singh</h2>
-            <p className='last--message'>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Neque esse nostrum veritatis?</p>
-            <p className="timestamp">12:00</p>
-        </div>
-    </StyledContainer>
-  )
-}
+const Contact = ({ obj }) => {
+    const handleClick = () => {
+        console.log(`Chat id - ${obj.chat_id}`);
+    };
+
+    return (
+        <StyledContainer onClick={handleClick}>
+            <img src={obj.profile_picture_link} alt="Profile" />
+            <div className="info">
+                <h2 className="name">{obj.username}</h2>
+                <p className='last--message'>{obj.last_message}</p>
+                <p className="timestamp">{obj.time_of_last_msg}</p>
+            </div>
+        </StyledContainer>
+    );
+};
 
 const StyledContainer = styled.div`
     margin-top: 15pxpx;
@@ -63,3 +67,5 @@ const StyledContainer = styled.div`
 `
 
 export default Contact
+
+

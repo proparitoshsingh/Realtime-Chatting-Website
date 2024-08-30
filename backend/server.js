@@ -2,7 +2,7 @@ const express = require('express');
 const session = require('express-session');
 const passport = require('passport');
 const connectDB = require('./config/db');
-const checkAuthenticated= require('./middleware/checkAuthenticated');
+const checkAuthenticated = require('./middleware/checkAuthenticated');
 const cors = require('cors');
 require('dotenv').config();
 require('./config/passport');
@@ -28,7 +28,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', require('./routes/auth'));
-app.use('/forget-password',require('./routes/verification'));
+app.use('/forget-password', require('./routes/verification'));
+app.use('/user', require('./routes/user'));
 
 app.get('/auth/check', (req, res) => {
    if (req.isAuthenticated()) {

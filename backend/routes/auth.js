@@ -3,6 +3,15 @@ const passport = require('passport');
 const bcrypt = require('bcryptjs');
 const User = require('../models/user');
 const router = express.Router();
+const jwt =require('jsonwebtoken');
+require('dotenv').config();
+
+const JWT_SECRET = process.env.JWT_SECRET;
+
+const generateToken = (user) => {
+   let token = jwt.sign({ id: user._id, username: user.username }, JWT_SECRET, { expiresIn: '1d' });
+   return token;
+};
 
 router.post('/signin', (req, res, next) => {
    passport.authenticate('local', (err, user, info) => {
@@ -10,8 +19,9 @@ router.post('/signin', (req, res, next) => {
       if (!user) return res.status(400).json({ message: 'Authentication failed' });
       req.logIn(user, (err) => {
          if (err) return next(err);
-         console.log('Auth Successfull for - ',user);
-         return res.json({ success: true, message: 'Authenticated successfully' });
+         const token = generateToken(user);
+         console.log('Auth Successfull for - ', user);
+         return res.json({ success: true, message: 'Authenticated successfully', username: user.username, token: token });
       });
    })(req, res, next);
 });
@@ -24,7 +34,8 @@ router.get('/google/callback', (req, res, next) => {
       if (!user) return res.redirect('/login?error=Authentication failed');
       req.logIn(user, (err) => {
          if (err) return next(err);
-         return res.redirect('http://localhost:5173/dashboard');
+         const token = generateToken(user);
+         return res.redirect(`http://localhost:5173/dashboard?token=${token}`);
       });
    })(req, res, next);
 });

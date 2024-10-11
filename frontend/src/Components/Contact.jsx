@@ -1,18 +1,20 @@
 import styled from "styled-components";
 import { useNavigate } from 'react-router-dom';
 
-const Contact = ({ obj }) => {
+const Contact = ({ obj, setChatId, setIsChat }) => {
     const handleClick = () => {
-        console.log(`Chat id - ${obj.chat_id}`);
+        console.log(`Chat id - ${obj._id}`);
+        setChatId(obj._id);
+        setIsChat(true);
     };
 
     return (
         <StyledContainer onClick={handleClick}>
             <img src={obj.profile_picture_link} alt="Profile" />
             <div className="info">
-                <h2 className="name">{obj.username}</h2>
-                <p className='last--message'>{obj.last_message}</p>
-                <p className="timestamp">{obj.time_of_last_msg}</p>
+                <h2 className="name">{obj.isGroup ? obj.groupName : obj.otherParticipants[0]}</h2>
+                <p className='last--message'>{obj.lastMessage?.content || 'No messages yet'}</p>
+                <p className="timestamp">{new Date(obj.lastMessage?.time).toLocaleString()}</p>
             </div>
         </StyledContainer>
     );

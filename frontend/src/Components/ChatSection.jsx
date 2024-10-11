@@ -1,60 +1,74 @@
 import { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import profilePic from '../assets/profile.png';
+import axios from 'axios';
 
-const curr_user = 'paritoshsingh';
-const messages = [
-   {
-      id: 1,
-      name: 'Karan',
-      time: '01:34 PM',
-      content: "Deepak is my best friend",
-      sender: 'karanSrestha',
-   },
-   {
-      id: 2,
-      name: 'Mohit',
-      time: '01:34 PM',
-      content: 'Dholi taro dhol baje',
-      sender: 'mohitSahoo',
-   },
-   {
-      id: 3,
-      name: 'Manjeet',
-      time: '01:34 PM',
-      content: "Placement lag gyiiii hurrrayyyy",
-      sender: 'manjeetSingh',
-   },
-   {
-      id: 4,
-      name: 'Paritosh',
-      time: '01:34 PM',
-      content: "tuta hua saaz hu main",
-      sender: 'paritoshsingh',
-   },
-];
-
-const ChatSection = ({ username , token}) => {
-
-
+const ChatSection = ({ username, token, chat_id }) => {
+   const [messages, setMessages] = useState([]);
+   const [participants, setParticipants] = useState([]);
    const [newMessage, setNewMessage] = useState('');
    const [showMenu, setShowMenu] = useState(false);
+   const [page, setPage] = useState(1);
+   const [hasMore, setHasMore] = useState(true);
+   const [groupName, setGroupName] = useState('');
+   const chatMessagesRef = useRef(null);
    const menuRef = useRef(null);
    const menuButtonRef = useRef(null);
 
    useEffect(() => {
-      document.addEventListener('mousedown', handleOutsideClick);
+      loadMessages();
+      loadChatDetails();
+
+      const chatMessagesDiv = chatMessagesRef.current;
+      chatMessagesDiv.addEventListener('scroll', handleScroll);
+
       return () => {
-         document.removeEventListener('mousedown', handleOutsideClick);
+         chatMessagesDiv.removeEventListener('scroll', handleScroll);
       };
-   }, [showMenu]);
+   }, [chat_id]);
+
+   const loadMessages = async () => {
+      try {
+         const response = await axios.get(`http://localhost:3000/api/chats/${chat_id}/messages`, {
+            params: { page },
+            headers: { Authorization: `Bearer ${token}` },
+         });
+         setMessages(prevMessages => [...response.data, ...prevMessages]);
+         if (response.data.length < 30) {
+            setHasMore(false);
+         }
+      } catch (error) {
+         console.error('Error fetching messages:', error);
+      }
+   };
+
+   const loadChatDetails = async () => {
+      try {
+         const response = await axios.get(`http://localhost:3000/api/chats/${chat_id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+         });
+         if (response.data.isGroup) {
+            setGroupName(response.data.groupName);
+            setParticipants(response.data.participants);
+         }
+      } catch (error) {
+         console.error('Error fetching chat details:', error);
+      }
+   };
+
+   const handleScroll = () => {
+      const chatMessagesDiv = chatMessagesRef.current;
+      if (chatMessagesDiv.scrollTop === 0 && hasMore) {
+         setPage(prevPage => prevPage + 1);
+      }
+   };
 
    const toggleMenu = () => {
       setShowMenu(!showMenu);
    };
 
    const handleOptionClick = (option) => {
-      console.log('The selected option is : ', option);
+      console.log('The selected option is:', option);
       setShowMenu(false);
    };
 
@@ -68,13 +82,20 @@ const ChatSection = ({ username , token}) => {
       }
    };
 
+   useEffect(() => {
+      document.addEventListener('mousedown', handleOutsideClick);
+      return () => {
+         document.removeEventListener('mousedown', handleOutsideClick);
+      };
+   }, [showMenu]);
+
    return (
       <StyledContainer>
          <div className="outer--container">
             <div className="card--container">
                <div className="chat-header">
                   <img src={profilePic} alt="profile pic" />
-                  <h2>KV United</h2>
+                  <h2>{groupName}</h2>
                   <span className="material-symbols-outlined chat-menu" onClick={toggleMenu} ref={menuButtonRef}>menu</span>
                   {showMenu && (
                      <div className="popup-menu" ref={menuRef}>
@@ -90,15 +111,15 @@ const ChatSection = ({ username , token}) => {
                      </div>
                   )}
                </div>
-               <div className="chat-messages">
-                  {messages.map((msg) => (
+               <div className="chat-messages" ref={chatMessagesRef}>
+                  {messages.map((msg, index) => (
                      <div
-                        key={msg.id}
-                        className={`message ${msg.sender === curr_user ? 'own' : 'other'}`}
+                        key={index}
+                        className={`message ${msg.sender.username === username ? 'own' : 'other'}`}
                      >
                         <div className="message-info">
-                           <span className="message-name">{`${msg.sender === curr_user ? 'You' : msg.name}`}</span>
-                           <span className="message-time">{msg.time}</span>
+                           <span className="message-name">{`${msg.sender.username === username ? 'You' : msg.sender.name}`}</span>
+                           <span className="message-time">{new Date(msg.time).toLocaleTimeString()}</span>
                         </div>
                         <div className="message-text">{msg.content}</div>
                      </div>
@@ -116,8 +137,10 @@ const ChatSection = ({ username , token}) => {
             </div>
          </div>
       </StyledContainer>
+
    );
 };
+
 
 const StyledContainer = styled.div`
    width: 60vw;

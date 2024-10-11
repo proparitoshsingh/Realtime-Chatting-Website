@@ -1,15 +1,15 @@
 import styled from 'styled-components';
 import Contact from './Contact';
 
-const ContactsSec = ({ inbox=[] }) => {
+const ContactsSec = ({ chats = [], setChatId, setIsChat }) => {
   return (
     <StyledComponent>
-    {inbox.length > 0 ? (
-        inbox.map((obj, index) => (
-          <Contact key={index} obj={obj} />
+      {chats.length > 0 ? (
+        chats.map((obj, index) => (
+          <Contact key={index} obj={obj} setChatId={setChatId} setIsChat={setIsChat} />
         ))
       ) : (
-        <p>No chts in the inbox to show.</p>
+        <p>No chats to show.</p>
       )}
     </StyledComponent>
   );

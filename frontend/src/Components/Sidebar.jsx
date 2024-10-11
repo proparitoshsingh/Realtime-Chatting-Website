@@ -1,37 +1,31 @@
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 import profilePic from '../assets/profile.png';
 import Navbar from './Navbar';
 import ContactsSec from './ContactsSec';
 
-const Sidebar = ({ username, token }) => {
-  const [inbox, setInbox] = useState([]);
+const Sidebar = ({ username, token, setChatId, setIsChat }) => {
+  const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchInbox = async () => {
+    const fetchChats = async () => {
       try {
-        const response = await fetch(`http://localhost:3000/user/inbox?username=${username}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+        const response = await axios.get(`http://localhost:3000/api/users/${username}/chats`, {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        const data = await response.json();
-        if (response.ok) {
-          setInbox(data.inbox);
-          console.log('Inbox:', data.inbox);
-        } else {
-          console.error('Error fetching inbox:', data.error);
-        }
+        setChats(response.data.chats);
+        console.log('Chats :', response.data.chats);
       } catch (error) {
-        console.error('Error fetching inbox:', error);
+        console.error('Error fetching chats:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchInbox();
-  }, [username, token]); 
+    fetchChats();
+  }, [username, token]);
 
   if (loading) {
     return <p>Loading...</p>;
@@ -52,7 +46,7 @@ const Sidebar = ({ username, token }) => {
         </div>
         <Navbar />
         <h4 className="msg">Messages</h4>
-        <ContactsSec inbox={inbox} />
+        <ContactsSec chats={chats} setChatId={setChatId} setIsChat={setIsChat} />
       </div>
     </StyledContainer>
   );

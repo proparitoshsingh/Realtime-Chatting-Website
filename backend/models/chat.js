@@ -1,29 +1,33 @@
-const { default: mongoose } = require("mongoose");
+const mongoose = require('mongoose');
 
 const chatSchema = new mongoose.Schema({
-    chat_id: {
-        type: String,
-        required: true,
-        unique: true
-    },
     isGroup: {
         type: Boolean,
         required: true
     },
     participants: [{
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true
     }],
     admin: {
-        type: String,
-        required: false
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: function() { return this.isGroup; }
     },
-    last_msg: {
+    groupName: { 
         type: String,
-        required: true
+        required: function() { return this.isGroup; }
+    },
+    lastMessage: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Message'
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
-const Chat = mongoose.model("Chat", chatSchema);
-
-module.exports=Chat;
+const Chat = mongoose.model('Chat', chatSchema);
+module.exports = Chat; 

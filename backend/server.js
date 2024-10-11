@@ -29,7 +29,9 @@ app.use(passport.session());
 
 app.use('/auth', require('./routes/auth'));
 app.use('/forget-password', require('./routes/verification'));
-app.use('/user', require('./routes/user'));
+app.use('/api/users', require('./routes/user'));
+app.use('/api/chats', require('./routes/chats'));
+
 
 app.get('/auth/check', (req, res) => {
    if (req.isAuthenticated()) {
